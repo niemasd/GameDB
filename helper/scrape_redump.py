@@ -26,12 +26,16 @@ if __name__ == "__main__":
                 # parse/clean attributes
                 region, title, system, version, edition, languages, serial, status = cols
                 region = clean(list(region.find_all('img'))[0]['title'])
-                title = clean(title.text)
+                title = clean(title.get_text(separator='\n').splitlines()[0])
                 system = clean(system.text)
                 version = clean(version.text)
                 edition = clean(edition.text)
                 languages = [clean(v['title']) for v in languages.find_all('img')]
-                serials = [clean(v) for v in serial.text.split(', ')]; serials = [v for v in serials if len(v) != 0]
+                try:
+                    serials = clean(serial['title']).split(', ')
+                except:
+                    serials = clean(serial.text).split(', ')
+                serials = [clean(v).replace(' ','-').replace('/','-') for v in serials if len(v) != 0]
                 status = clean(list(status.find_all('img'))[0]['title'])
 
                 # write attributes to files
