@@ -3,6 +3,7 @@ Niema's databases for games from various consoles. These repositories are not in
 
 * **Nintendo 64 (N64):** https://github.com/niemasd/GameDB-N64
 * **Nintendo GameCube (GC):** https://github.com/niemasd/GameDB-GC
+* **Nintendo Wii:** https://github.com/niemasd/GameDB-Wii
 * **Sony PlayStation (PSX):** https://github.com/niemasd/GameDB-PSX
 * **Sony PlayStation 2 (PS2):** https://github.com/niemasd/GameDB-PS2
 * **Sony PlayStation Portable (PSP):** https://github.com/niemasd/GameDB-PSP
