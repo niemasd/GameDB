@@ -14,7 +14,7 @@ def clean(s):
 # main program
 if __name__ == "__main__":
     if len(argv) == 1 or argv[1].lower() in {'-h', '--help', '-help'}:
-        print("USAGE: %s <redump_url>" % argv[0]); exit(1)
+        print("USAGE: %s <redump_url> [redump_url_2] [redump_url_3] [...]" % argv[0]); exit(1)
     for url in argv[1:]:
         print("Parsing: %s" % url)
         soup = BeautifulSoup(urlopen(url).read(), 'html.parser')
