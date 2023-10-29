@@ -30,6 +30,7 @@ REGION = {
     'Greece':                 'PAL',
     'India':                  'PAL',
     'Ireland':                'PAL',
+    'Israel':                 'PAL',
     'Italy':                  'PAL',
     'Japan':                  'NTSC-J',
     'Japan, Asia':            'NTSC-J',
@@ -60,6 +61,7 @@ REGION = {
     'USA, Asia':              'NTSC-U',
     'USA, Brazil':            'NTSC-U',
     'USA, Canada':            'NTSC-U',
+    'USA, Europe':            'NTSC-U',
     'World':                  'NTSC-U',
 }
 
