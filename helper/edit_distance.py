@@ -84,7 +84,9 @@ if __name__ == "__main__":
     stderr.write('Successfully performed %d pairwise edit distance calculations\n' % len(dists))
 
     # write output
+    stderr.write("Sorting pairwise edit distances...\n")
     dists.sort()
+    stderr.write("Writing pairwise edit distances to: %s\n" % args.output)
     if args.output.strip().lower() == 'stdout':
         from sys import stdout as out_f
     elif isfile(args.output):
