@@ -2,8 +2,14 @@
 '''
 Calculate the pairwise edit distances between a bunch of files (e.g. titles)
 '''
+from multiprocessing import Pool
+from os import cpu_count
 from os.path import isfile
 from sys import stderr
+try:
+    from tqdm import tqdm
+except:
+    print("Unable to import tqdm. Install with: pip install tqdm"); exit(1)
 import argparse
 ARTICLE_PREFIXES = ['THE ', 'A ', 'AN ']
 
@@ -39,6 +45,12 @@ def edit_distance(s, t, ignore_articles=False, ignore_case=False):
             )
     return D[-1][-1]
 
+# parallel helper function
+def edit_distance_parallel(x):
+    data, fn_s, fn_t, ignore_articles, ignore_case = x
+    d = edit_distance(data[fn_s], data[fn_t], ignore_articles=ignore_articles, ignore_case=ignore_case)
+    return (d, fn_s, fn_t)
+
 # main program
 if __name__ == "__main__":
     # parse user args
@@ -48,39 +60,30 @@ if __name__ == "__main__":
     parser.add_argument('-oc', '--output_contents', action="store_true", help="Ouput file contents (in addition to just filenames)")
     parser.add_argument('-ia', '--ignore_articles', action="store_true", help="Ignore articles ('The', 'A', and 'An')")
     parser.add_argument('-ic', '--ignore_case', action="store_true", help="Ignore case")
-    parser.add_argument('-ld', '--load_data', action="store_true", help="Load all data up-front (faster, but more memory)")
+    parser.add_argument('-t', '--threads', type=int, default=cpu_count(), help="Number of Threads")
+    parser.add_argument('-cs', '--chunk_size', type=int, default=1024, help="Chunk Size")
     args = parser.parse_args()
 
     # check user args
     if len(args.files) < 2:
         raise ValueError("Must specify at least 2 files")
+    if args.threads < 1 or args.threads > cpu_count():
+        raise ValueError("Number of threads must be between 1 and %d: %d" % (cpu_count(), args.threads()))
+    if args.chunk_size < 1:
+        raise ValueError("Chunk size must be positive: %d" % args.chunk_size)
     for fn in args.files:
         if not isfile(fn):
             raise ValueError("File not found: %s" % fn)
-
-    # load data up front if user asks for it
-    if args.load_data:
-        stderr.write("Loading data from %d files...\n" % len(args.files))
-        data = {fn:open(fn).read().strip() for fn in args.files}
-    else:
-        data = None
+    stderr.write("Loading data from %d files...\n" % len(args.files))
+    data = {fn:open(fn).read().strip() for fn in args.files}
 
     # calculate pairwise edit distances
     num_pairs = len(args.files) * (len(args.files)-1) // 2
     dists = list() # list of (edit_distance, file1, file2) tuples
-    for i in range(0, len(args.files)-1):
-        if data is None:
-            s = open(args.files[i]).read().strip()
-        else:
-            s = data[args.files[i]]
-        for j in range(i+1, len(args.files)):
-            stderr.write('Performing comparision %d of %d...\r' % (len(dists)+1, num_pairs)); stderr.flush()
-            if data is None:
-                t = open(args.files[j]).read().strip()
-            else:
-                t = data[args.files[j]]
-            d = edit_distance(s, t, ignore_articles=args.ignore_articles, ignore_case=args.ignore_case)
-            dists.append((d, args.files[i], args.files[j]))
+    inputs = ((data, args.files[i], args.files[j], args.ignore_articles, args.ignore_case) for i in range(0, len(args.files)-1) for j in range(i+1, len(args.files)))
+    pool = Pool(processes=args.threads)
+    for result in tqdm(pool.imap_unordered(edit_distance_parallel, inputs, chunksize=args.chunk_size), total=num_pairs):
+        dists.append(result)
     stderr.write('Successfully performed %d pairwise edit distance calculations\n' % len(dists))
 
     # write output
