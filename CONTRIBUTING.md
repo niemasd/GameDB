@@ -109,7 +109,7 @@ If you want to add a new game release that was previously missing:
 8. Click "Commit changes" (green button)
 
 ## Step 3: Create a Pull Request (PR)
-Once you have made all of the edits you would like to contribute, you can create a "Pull Request" (PR). You can read more about what "Pull Requests" are in the [*About pull requests*]([https://docs.github.com/en/get-started/quickstart/fork-a-repo](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)) page of the GitHub documentation, but in short, a "Pull Request" is a request to merge your edits into the original repository. Every GitHub repository has a "Pull requests" tab at the top of the page.
+Once you have made all of the edits you would like to contribute, you can create a "Pull Request" (PR). You can read more about what "Pull Requests" are in the [*About pull requests*](https://docs.github.com/articles/about-pull-requests) page of the GitHub documentation, but in short, a "Pull Request" is a request to merge your edits into the original repository. Every GitHub repository has a "Pull requests" tab at the top of the page.
 
 1. Click on the "Pull requests" tab in your forked repository that has the changes you would like to submit
 2. Click "New pull request" (green button in the top-right)
