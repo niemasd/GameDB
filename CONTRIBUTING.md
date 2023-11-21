@@ -114,3 +114,5 @@ Once you have made all of the edits you would like to contribute, you can create
 1. Click on the "Pull requests" tab in your forked repository that has the changes you would like to submit
 2. Click "New pull request" (green button in the top-right)
 3. Click "Create pull request" (green button in the top-right)
+
+Once you submit your Pull Request, I will receive a notification, at which point I can review it and merge it (or leave feedback if any changes seem necessary before merging). Everyone whose Pull Requests have been merged into a given console-specific repository will be highlighted in the "Contributors" section of the repository (bottom-right of the main page).
