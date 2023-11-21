@@ -83,7 +83,7 @@ If you want to add a new piece of metadata that was previously missing:
 2. Click the "Add file" button in the top-right
 3. Click "Create new file"
 4. In the "Name your file..." textbox at the top, enter the name of the metadata file you want to create (e.g. `release_date.txt`)
-    * See Metadata Files for a list of metadata files you can create
+    * See the [Metadata Files](#metadata-files) section for a list of metadata files you can create
 5. In the big textbox that says "Enter file contents here", type the metadata you want to contribute
     * Please use consistent formatting with respect to the same metadata in other game releases
 6. Click "Commit changes..." (green button in the top-right)
