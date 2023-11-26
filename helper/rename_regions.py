@@ -62,6 +62,7 @@ REGION = {
     'United Arab Emirates':   'PAL',
     'USA':                    'NTSC-U',
     'USA, Asia':              'NTSC-U',
+    'USA, Australia':         'NTSC-U',
     'USA, Brazil':            'NTSC-U',
     'USA, Canada':            'NTSC-U',
     'USA, Europe':            'NTSC-U',
