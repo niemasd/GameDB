@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 '''
-Scrape metadata from a Redump URL
+Search MobyGames for a given game
 '''
 
 # imports
