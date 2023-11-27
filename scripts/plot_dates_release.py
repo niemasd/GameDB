@@ -17,6 +17,8 @@ if len(argv) > 1:
 dates = list(); regions = list()
 for txt in glob('games/*/release_date.txt'):
     data = open(txt).read().strip()
+    if len(data) == 0:
+        continue # ignore empty files
     try:
         release_date = datetime.strptime(data, '%Y-%m-%d')
     except:
