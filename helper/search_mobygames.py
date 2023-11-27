@@ -68,6 +68,8 @@ if __name__ == "__main__":
         out_f.write(game_data['title'])
         out_f.write('\t%s\t%s' % sorted((curr['first_release_date'].strip(),curr['platform_name'].strip()) for curr in game_data['platforms'])[0])
         out_f.write('\t%s' % ', '.join(sorted(curr['genre_name'] for curr in game_data['genres'])))
-        out_f.write('\t%s' % game_data['description'].replace('\n','').strip())
+        out_f.write('\t')
+        if 'description' in game_data and game_data['description'] is not None:
+            out_f.write('\t%s' % game_data['description'].replace('\n','').strip())
         out_f.write('\n')
     out_f.close()
