@@ -50,9 +50,11 @@ if __name__ == "__main__":
         url += ('&title=%s' % quote(args.title, safe=''))
 
     # parse platform
+    platform_ID = None
     if args.platform is not None:
         try:
-            url += ('&platform=%d' % PLATFORM_ID[args.platform.strip().upper()])
+            platform_ID = PLATFORM_ID[args.platform.strip().upper()]
+            url += ('&platform=%d' % platform_ID)
         except:
             raise ValueError("Invalid platform: %s" % args.platform)
 
@@ -66,7 +68,17 @@ if __name__ == "__main__":
     out_f.write('Title\tRelease Date\tPlatform\tGenre\tDescription (HTML)\n')
     for game_data in data['games']:
         out_f.write(game_data['title'])
-        out_f.write('\t%s\t%s' % sorted((curr['first_release_date'].strip(),curr['platform_name'].strip()) for curr in game_data['platforms'])[0])
+        if args.platform is None:
+            out_f.write('\t%s\t%s' % sorted((curr['first_release_date'].strip(),curr['platform_name'].strip()) for curr in game_data['platforms'])[0])
+        else:
+            tmp = None
+            for curr in game_data['platforms']:
+                if curr['platform_id'] == platform_ID:
+                    tmp = (curr['first_release_date'].strip(), curr['platform_name'].strip()); break
+            if tmp is None:
+                out_f.write('\t\t')
+            else:
+                out_f.write('\t%s\t%s' % tmp)
         out_f.write('\t%s' % ', '.join(sorted(curr['genre_name'] for curr in game_data['genres'])))
         out_f.write('\t')
         if 'description' in game_data and game_data['description'] is not None:
