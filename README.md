@@ -13,6 +13,7 @@ Niema's databases for games from various consoles. These repositories are not in
 * **Sony PlayStation 2 (PS2):** https://github.com/niemasd/GameDB-PS2
 * **Sony PlayStation 3 (PS3):** https://github.com/niemasd/GameDB-PS3
 * **Sony PlayStation Portable (PSP):** https://github.com/niemasd/GameDB-PSP
+* **Super Nintendo Entertainment System (SNES):** https://github.com/niemasd/GameDB-SNES
 
 # Projects Using GameDB
 
