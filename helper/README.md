@@ -3,6 +3,9 @@ This directory contains helper scripts.
 # `edit_distance.py`
 Calculate the pairwise edit distances between a bunch of files (e.g. titles).
 
+# `parse_filename.py`
+Parse a filename to extract the title, region, language(s), etc. and print as TSV.
+
 # `rename_regions.py`
 Rename regions to be NTSC-U, NTSC-PAL, or NTSC-J.
 
