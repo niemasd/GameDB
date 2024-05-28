@@ -74,7 +74,7 @@ REGION = {
 # main program
 if __name__ == "__main__":
     for fn in glob('*/region.txt'):
-        r = open(fn).read().strip()
+        r = open(fn).read().strip().replace('\n',', ').replace(' / ',', ')
         if r not in REGION:
             print("Missing Region: %s" % r); exit(1)
         f = open(fn, 'w'); f.write('%s\n' % REGION[r]); f.close()
