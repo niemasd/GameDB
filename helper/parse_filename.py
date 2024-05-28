@@ -26,10 +26,12 @@ LANGUAGES = {
     'No':    'Norwegian',
     'Pl':    'Polish',
     'Pt':    'Portuguese',
+    'Ro':    'Romanian',
     'Ru':    'Russian',
     'Sv':    'Swedish',
     'Zh':    'Simplified Chinese',
 }
+LANGUAGES |= {'%s+%s' % (k1,k2) : '%s / %s' % (v1,v2) for k1,v1 in LANGUAGES.items() for k2,v2 in LANGUAGES.items()}
 
 # regions
 REGIONS = {

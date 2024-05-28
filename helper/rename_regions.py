@@ -8,6 +8,7 @@ from glob import glob
 REGION = {
     'Asia':                   'NTSC-J',
     'Australia':              'PAL',
+    'Australia, Greece':      'PAL',
     'Australia, New Zealand': 'PAL',
     'AUSTRALIAN':             'PAL',
     'Austria':                'PAL',
