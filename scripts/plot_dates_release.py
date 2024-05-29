@@ -27,7 +27,10 @@ for txt in glob('games/*/release_date.txt'):
         except:
             release_date = datetime.strptime(data, '%Y')
     dates.append(release_date)
-    regions.append(open(txt.replace('release_date.txt','region.txt')).read().strip().replace('\n',' / '))
+    try:
+        regions.append(open(txt.replace('release_date.txt','region.txt')).read().strip().replace('\n',' / '))
+    except:
+        regions.append('Unknown')
 
 # plot dates
 fig, ax = plt.subplots(figsize=(10,5))
