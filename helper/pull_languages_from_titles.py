@@ -26,6 +26,7 @@ LANGUAGES = {
     'No':      'Norwegian',
     'Pl':      'Polish',
     'Pt':      'Portuguese',
+    'Pt-BR':   'Portuguese',
     'Ro':      'Romanian',
     'Ru':      'Russian',
     'Sv':      'Swedish',
