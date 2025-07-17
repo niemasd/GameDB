@@ -5,6 +5,7 @@ Niema's databases for games from various consoles. These repositories are not in
 * **Microsoft XBOX:** https://github.com/niemasd/GameDB-XBOX
 * **Microsoft XBOX 360:** https://github.com/niemasd/GameDB-XBOX360
 * **Nintendo 64 (N64):** https://github.com/niemasd/GameDB-N64
+* **Nintendo Entertainment System (NES):** https://github.com/niemasd/GameDB-NES
 * **Nintendo Game Boy (GB):** https://github.com/niemasd/GameDB-GB
 * **Nintendo Game Boy Advance (GBA):** https://github.com/niemasd/GameDB-GBA
 * **Nintendo Game Boy Color (GBC):** https://github.com/niemasd/GameDB-GBC
