@@ -4,6 +4,7 @@ Niema's databases for games from various consoles. These repositories are not in
 
 * **Atari 2600:** https://github.com/niemasd/GameDB-Atari2600
 * **Atari 5200:** https://github.com/niemasd/GameDB-Atari5200
+* **Atari 7800:** https://github.com/niemasd/GameDB-Atari7800
 * **Commodore Amiga:** https://github.com/niemasd/GameDB-Amiga
 * **Microsoft XBOX:** https://github.com/niemasd/GameDB-XBOX
 * **Microsoft XBOX 360:** https://github.com/niemasd/GameDB-XBOX360
