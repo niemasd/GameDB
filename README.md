@@ -33,6 +33,7 @@ Niema's databases for games from various consoles. These repositories are not in
 * **Sega Master System (SMS):** https://github.com/niemasd/GameDB-SMS
 * **Sega Saturn:** https://github.com/niemasd/GameDB-Saturn
 * **SNK Neo Geo CD:** https://github.com/niemasd/GameDB-NeoGeoCD
+* **SNK Neo Geo Pocket (NGP):** https://github.com/niemasd/GameDB-NGP
 * **Sony PlayStation (PSX):** https://github.com/niemasd/GameDB-PSX
 * **Sony PlayStation 2 (PS2):** https://github.com/niemasd/GameDB-PS2
 * **Sony PlayStation 3 (PS3):** https://github.com/niemasd/GameDB-PS3
