@@ -6,6 +6,7 @@ Niema's databases for games from various consoles. These repositories are not in
 * **Atari 5200:** https://github.com/niemasd/GameDB-Atari5200
 * **Atari 7800:** https://github.com/niemasd/GameDB-Atari7800
 * **Atari Jaguar:** https://github.com/niemasd/GameDB-Jaguar
+* **Atari Lynx:** https://github.com/niemasd/GameDB-Lynx
 * **Atari ST:** https://github.com/niemasd/GameDB-AtariST
 * **Commodore Amiga:** https://github.com/niemasd/GameDB-Amiga
 * **Microsoft XBOX:** https://github.com/niemasd/GameDB-XBOX
