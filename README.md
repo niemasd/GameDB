@@ -30,6 +30,7 @@ Niema's databases for games from various consoles. These repositories are not in
 * **Sega Dreamcast:** https://github.com/niemasd/GameDB-Dreamcast
 * **Sega Game Gear:** https://github.com/niemasd/GameDB-GameGear
 * **Sega Genesis:** https://github.com/niemasd/GameDB-Genesis
+* **Sega Master System (SMS):** https://github.com/niemasd/GameDB-SMS
 * **Sega Saturn:** https://github.com/niemasd/GameDB-Saturn
 * **SNK Neo Geo CD:** https://github.com/niemasd/GameDB-NeoGeoCD
 * **Sony PlayStation (PSX):** https://github.com/niemasd/GameDB-PSX
