@@ -27,6 +27,7 @@ Niema's databases for games from various consoles. These repositories are not in
 * **Nintendo Wii:** https://github.com/niemasd/GameDB-Wii
 * **Sega CD:** https://github.com/niemasd/GameDB-SegaCD
 * **Sega Dreamcast:** https://github.com/niemasd/GameDB-Dreamcast
+* **Sega Game Gear:** https://github.com/niemasd/GameDB-GameGear
 * **Sega Genesis:** https://github.com/niemasd/GameDB-Genesis
 * **Sega Saturn:** https://github.com/niemasd/GameDB-Saturn
 * **SNK Neo Geo CD:** https://github.com/niemasd/GameDB-NeoGeoCD
