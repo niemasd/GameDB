@@ -19,6 +19,7 @@ Niema's databases for games from various consoles. These repositories are not in
 * **Nintendo 64 (N64):** https://github.com/niemasd/GameDB-N64
 * **Nintendo 64DD:** https://github.com/niemasd/GameDB-64DD
 * **Nintendo Entertainment System (NES):** https://github.com/niemasd/GameDB-NES
+* **Nintendo Famicom Disk System (FDS):** https://github.com/niemasd/GameDB-FDS
 * **Nintendo Game & Watch:** https://github.com/niemasd/GameDB-GameAndWatch
 * **Nintendo Game Boy (GB):** https://github.com/niemasd/GameDB-GB
 * **Nintendo Game Boy Advance (GBA):** https://github.com/niemasd/GameDB-GBA
