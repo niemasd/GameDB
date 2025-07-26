@@ -77,9 +77,21 @@
     th.sorted-asc::after { content: " ▲"; }
     th.sorted-desc::after { content: " ▼"; }
 
-    a {
-      color: inherit;
+    a:link {
+      color: #0066cc;
       text-decoration: underline;
+    }
+
+    a:visited {
+      color: #800080;
+    }
+
+    a:hover {
+      color: #3399ff;
+    }
+
+    a:active {
+      color: #ff6600;
     }
   </style>
 </head>
@@ -88,6 +100,9 @@
     <div id="headerRow">
       <h1 style="margin: 0;">GameDB Viewer</h1>
       <button id="modeToggle">🌙 Dark Mode</button>
+    </div>
+    <div id="subtitleRow">
+      <a id="githubLink" target="_blank">Loading...</a>
     </div>
     <select id="consoleSelector">
       <option value="">Select a Console</option>
@@ -100,6 +115,10 @@
   <script>
     const GITHUB_USERNAME = 'niemasd';
     const CORS_PROXY = 'https://corsproxy.io/?';
+
+    // Dynamically update the GitHub link
+    document.getElementById('githubLink').href = `https://github.com/${GITHUB_USERNAME}/GameDB`;
+    document.getElementById('githubLink').textContent = `https://github.com/${GITHUB_USERNAME}/GameDB`;
 
     const db = new Map();
     const consoleMap = new Map(); // Map CONSOLE_NAME -> { url, abbrev }
