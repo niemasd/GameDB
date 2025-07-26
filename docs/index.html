@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GameDB Viewer</title>
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --table-bg: #f2f2f2;
+      --border-color: #ddd;
+      --input-bg: #ffffff;
+    }
+
+    body.dark {
+      --bg-color: #1e1e1e;
+      --text-color: #eeeeee;
+      --table-bg: #333333;
+      --border-color: #555555;
+      --input-bg: #2a2a2a;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    #controls {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #headerRow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    #modeToggle {
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    select, input {
+      margin: 10px 5px;
+      padding: 5px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+      font-family: monospace;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 8px;
+      font-family: monospace;
+    }
+
+    th {
+      cursor: pointer;
+      background-color: var(--table-bg);
+      user-select: none;
+    }
+
+    th.sorted-asc::after { content: " ▲"; }
+    th.sorted-desc::after { content: " ▼"; }
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <div id="headerRow">
+      <h1 style="margin: 0;">GameDB Viewer</h1>
+      <button id="modeToggle">🌙 Dark Mode</button>
+    </div>
+    <select id="consoleSelector">
+      <option value="">Select a Console</option>
+    </select>
+    <input type="text" id="searchBox" placeholder="Search..." style="width: 300px;">
+  </div>
+
+  <div id="tableContainer"></div>
+
+  <script>
+    const GITHUB_USERNAME = 'niemasd';
+    const CORS_PROXY = 'https://corsproxy.io/?';
+
+    const db = new Map();
+    const consoleMap = new Map(); // Map CONSOLE_NAME -> { url, abbrev }
+    let sortState = { index: null, direction: null };
+    let currentAbbrev = null; // Tracks abbrev for hyperlinking
+
+    async function loadMarkdown() {
+      const readmeUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/GameDB/main/README.md`;
+      const res = await fetch(readmeUrl);
+      const md = await res.text();
+      const lines = md.split('\n');
+      const regex = new RegExp(`^\\* \\*\\*(.+?):\\*\\* https://github\\.com/${GITHUB_USERNAME}/GameDB-(\\w+)`);
+
+      for (const line of lines) {
+        const match = line.match(regex);
+        if (match) {
+          const consoleName = match[1];
+          const abbrev = match[2];
+          const url = `https://github.com/${GITHUB_USERNAME}/GameDB-${abbrev}`;
+          db.set(consoleName, null);
+          consoleMap.set(consoleName, { url, abbrev });
+          addOption(consoleName);
+        }
+      }
+    }
+
+    function addOption(consoleName) {
+      const selector = document.getElementById('consoleSelector');
+      const option = document.createElement('option');
+      option.value = consoleName;
+      option.textContent = consoleName;
+      selector.appendChild(option);
+    }
+
+    async function loadTSV(consoleName) {
+      const { abbrev } = consoleMap.get(consoleName);
+      currentAbbrev = abbrev; // store for hyperlink rendering
+      const url = `${CORS_PROXY}https://github.com/${GITHUB_USERNAME}/GameDB-${abbrev}/releases/latest/download/${abbrev}.data.tsv`;
+      const res = await fetch(url);
+      const text = await res.text();
+      const rows = text.trim().split('\n').map(row => row.split('\t'));
+      db.set(consoleName, rows);
+      return rows;
+    }
+
+    function renderTable(data) {
+      const container = document.getElementById('tableContainer');
+      container.innerHTML = '';
+      if (!data || data.length === 0) return;
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tbody = document.createElement('tbody');
+
+      const headers = data[0];
+      const idIndex = headers.indexOf('ID');
+
+      const headerRow = document.createElement('tr');
+      headers.forEach((header, idx) => {
+        const th = document.createElement('th');
+        th.textContent = header;
+
+        th.addEventListener('click', () => {
+          const isSameColumn = sortState.index === idx;
+          const ascending = !isSameColumn || sortState.direction === 'desc';
+
+          sortState = {
+            index: idx,
+            direction: ascending ? 'asc' : 'desc'
+          };
+
+          const sortedRows = data.slice(1).slice().sort((a, b) => {
+            const aVal = a[idx] || '';
+            const bVal = b[idx] || '';
+            return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+          });
+
+          const sortedData = [headers, ...sortedRows];
+          renderTable(sortedData);
+        });
+
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const renderBody = (filteredData) => {
+        tbody.innerHTML = '';
+        filteredData.slice(1).forEach(row => {
+          const tr = document.createElement('tr');
+          row.forEach((cell, colIdx) => {
+            const td = document.createElement('td');
+
+            if (colIdx === idIndex && cell) {
+              const a = document.createElement('a');
+              a.href = `https://github.com/${GITHUB_USERNAME}/GameDB-${currentAbbrev}/tree/main/games/${cell}`;
+              a.target = '_blank';
+              a.textContent = cell;
+              td.appendChild(a);
+            } else {
+              td.textContent = cell;
+            }
+
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      };
+
+      renderBody(data);
+
+      document.getElementById('searchBox').oninput = function () {
+        const query = this.value.toLowerCase();
+        const filtered = [data[0], ...data.slice(1).filter(row =>
+          row.some(cell => (cell || '').toLowerCase().includes(query))
+        )];
+        renderBody(filtered);
+      };
+
+      table.appendChild(tbody);
+      container.appendChild(table);
+
+      thead.querySelectorAll('th').forEach((th, i) => {
+        th.classList.remove('sorted-asc', 'sorted-desc');
+        if (sortState.index === i) {
+          th.classList.add(sortState.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+        }
+      });
+
+      // Sort by first column automatically
+      if (sortState.index === null) {
+        table.querySelectorAll('th')[0].click();
+      }
+    }
+
+    document.getElementById('consoleSelector').addEventListener('change', async function () {
+      const consoleName = this.value;
+      sortState = { index: null, direction: null }; // Reset sort state
+      if (!consoleName) return;
+      if (!db.get(consoleName)) {
+        try {
+          const data = await loadTSV(consoleName);
+          renderTable(data);
+        } catch (err) {
+          alert('Failed to load TSV data for this console.');
+        }
+      } else {
+        renderTable(db.get(consoleName));
+      }
+    });
+
+    document.getElementById('modeToggle').addEventListener('click', function () {
+      const body = document.body;
+      body.classList.toggle('dark');
+      this.textContent = body.classList.contains('dark') ? '☀️ Light Mode' : '🌙 Dark Mode';
+    });
+
+    loadMarkdown();
+  </script>
+</body>
+</html>
