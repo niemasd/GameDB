@@ -1,6 +1,10 @@
 # GameDB
 
-Niema's databases for games from various consoles. These repositories are not intended to serve as a replacement for websites like [TheGamesDB](https://thegamesdb.net/), [Micro-64](http://micro-64.com/database/masterlist.shtml), [PlayStation DataCenter](https://psxdatacenter.com/), etc., but rather, these repositories are intended to serve as a more structured format of metadata (e.g. for use in tools, devices, etc.) that can be easily downloaded in bulk.
+Niema's databases for games from various consoles. These repositories are not intended to serve as a replacement for websites like [TheGamesDB](https://thegamesdb.net/), [Micro-64](http://micro-64.com/database/masterlist.shtml), [PlayStation DataCenter](https://psxdatacenter.com/), etc., but rather, these repositories are intended to serve as a more structured format of metadata (e.g. for use in tools, devices, etc.) that can be easily downloaded in bulk. You can also interact with GameDB via the following interactive web page:
+
+http://niema.net/GameDB
+
+Here is the list of consoles currently in GameDB:
 
 * **ASCII MSX:** https://github.com/niemasd/GameDB-MSX
 * **ASCII MSX2:** https://github.com/niemasd/GameDB-MSX2
