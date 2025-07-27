@@ -40,6 +40,7 @@ Here is the list of consoles currently in GameDB:
 * **Sega Game Gear:** https://github.com/niemasd/GameDB-GameGear
 * **Sega Genesis:** https://github.com/niemasd/GameDB-Genesis
 * **Sega Master System (SMS):** https://github.com/niemasd/GameDB-SMS
+* **Sega Pico:** https://github.com/niemasd/GameDB-Pico
 * **Sega Saturn:** https://github.com/niemasd/GameDB-Saturn
 * **SNK Neo Geo CD:** https://github.com/niemasd/GameDB-NeoGeoCD
 * **SNK Neo Geo Pocket (NGP):** https://github.com/niemasd/GameDB-NGP
