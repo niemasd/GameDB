@@ -15,6 +15,7 @@ Here is the list of consoles currently in GameDB:
 * **Atari Lynx:** https://github.com/niemasd/GameDB-Lynx
 * **Atari ST:** https://github.com/niemasd/GameDB-AtariST
 * **Bandai SuFami Turbo:** https://github.com/niemasd/GameDB-SuFamiTurbo
+* **Bandai WonderSwan:** https://github.com/niemasd/GameDB-WonderSwan
 * **Casio Loopy:** https://github.com/niemasd/GameDB-Loopy
 * **ColecoVision:** https://github.com/niemasd/GameDB-ColecoVision
 * **Commodore 64:** https://github.com/niemasd/GameDB-C64
