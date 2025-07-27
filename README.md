@@ -44,6 +44,7 @@ Here is the list of consoles currently in GameDB:
 * **Sega Pico:** https://github.com/niemasd/GameDB-Pico
 * **Sega Saturn:** https://github.com/niemasd/GameDB-Saturn
 * **Sega SG-1000:** https://github.com/niemasd/GameDB-SG1000
+* **Smith Engineering Vectrex:** https://github.com/niemasd/GameDB-Vectrex
 * **SNK Neo Geo CD:** https://github.com/niemasd/GameDB-NeoGeoCD
 * **SNK Neo Geo Pocket (NGP):** https://github.com/niemasd/GameDB-NGP
 * **SNK Neo Geo Pocket Color (NGPC):** https://github.com/niemasd/GameDB-NGPC
