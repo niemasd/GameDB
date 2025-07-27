@@ -31,6 +31,7 @@ Here is the list of consoles currently in GameDB:
 * **Nintendo Game Boy Advance (GBA):** https://github.com/niemasd/GameDB-GBA
 * **Nintendo Game Boy Color (GBC):** https://github.com/niemasd/GameDB-GBC
 * **Nintendo GameCube (GC):** https://github.com/niemasd/GameDB-GC
+* **Nintendo Satellaview:** https://github.com/niemasd/GameDB-Satellaview
 * **Nintendo Switch:** https://github.com/niemasd/GameDB-Switch
 * **Nintendo Wii:** https://github.com/niemasd/GameDB-Wii
 * **Sega CD:** https://github.com/niemasd/GameDB-SegaCD
