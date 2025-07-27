@@ -34,6 +34,7 @@ Here is the list of consoles currently in GameDB:
 * **Nintendo Satellaview:** https://github.com/niemasd/GameDB-Satellaview
 * **Nintendo Switch:** https://github.com/niemasd/GameDB-Switch
 * **Nintendo Wii:** https://github.com/niemasd/GameDB-Wii
+* **Sega 32X:** https://github.com/niemasd/GameDB-32X
 * **Sega CD:** https://github.com/niemasd/GameDB-SegaCD
 * **Sega Dreamcast:** https://github.com/niemasd/GameDB-Dreamcast
 * **Sega Game Gear:** https://github.com/niemasd/GameDB-GameGear
