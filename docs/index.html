@@ -115,10 +115,11 @@
   <script>
     const GITHUB_USERNAME = 'niemasd';
     const CORS_PROXY = 'https://corsproxy.io/?';
+    const GAMEDB_URL = `https://github.com/${GITHUB_USERNAME}/GameDB`;
 
     // Dynamically update the GitHub link
-    document.getElementById('githubLink').href = `https://github.com/${GITHUB_USERNAME}/GameDB`;
-    document.getElementById('githubLink').textContent = `https://github.com/${GITHUB_USERNAME}/GameDB`;
+    document.getElementById('githubLink').href = GAMEDB_URL;
+    document.getElementById('githubLink').textContent = GAMEDB_URL;
 
     const db = new Map();
     const consoleMap = new Map(); // Map CONSOLE_NAME -> { url, abbrev }
@@ -255,10 +256,25 @@
     }
 
     document.getElementById('consoleSelector').addEventListener('change', async function () {
+      // set things up
       const consoleName = this.value;
       sortState = { index: null, direction: null }; // Reset sort state
-      if (!consoleName) return;
-      currentAbbrev = consoleMap.get(consoleName).abbrev; // store for hyperlink rendering
+
+      // revert to initial state if empty selection
+      if (!consoleName) {
+        document.getElementById('githubLink').href = GAMEDB_URL;
+        document.getElementById('githubLink').textContent = GAMEDB_URL;
+        renderTable({});
+        return;
+      }
+
+      // get console metadata
+      currentMeta = consoleMap.get(consoleName);
+      currentAbbrev = currentMeta.abbrev; // store for hyperlink rendering
+      document.getElementById('githubLink').href = currentMeta.url;
+      document.getElementById('githubLink').textContent = currentMeta.url;
+
+      // get console table data
       if (!db.get(consoleName)) {
         try {
           const data = await loadTSV(consoleName);
