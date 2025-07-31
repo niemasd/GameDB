@@ -18,8 +18,8 @@ for game_folder in sorted(glob('games/*')):
         else:
             contents = list()
         if len(contents) == 0:
-            f.write(' / '.join(contents))
-        else:
             f.write('N/A')
+        else:
+            f.write(' / '.join(contents))
     f.write('\n')
 f.close()
