@@ -155,7 +155,6 @@
 
     async function loadTSV(consoleName) {
       const { abbrev } = consoleMap.get(consoleName);
-      currentAbbrev = abbrev; // store for hyperlink rendering
       const url = `${CORS_PROXY}https://github.com/${GITHUB_USERNAME}/GameDB-${abbrev}/releases/latest/download/${abbrev}.data.tsv`;
       const res = await fetch(url);
       const text = await res.text();
@@ -259,6 +258,7 @@
       const consoleName = this.value;
       sortState = { index: null, direction: null }; // Reset sort state
       if (!consoleName) return;
+      currentAbbrev = consoleMap.get(consoleName).abbrev; // store for hyperlink rendering
       if (!db.get(consoleName)) {
         try {
           const data = await loadTSV(consoleName);
