@@ -214,7 +214,7 @@
 
             if (colIdx === idIndex && cell) {
               const a = document.createElement('a');
-              a.href = encodeURIComponent(`https://github.com/${GITHUB_USERNAME}/GameDB-${currentAbbrev}/tree/main/games/${cell}`);
+              a.href = `https://github.com/${GITHUB_USERNAME}/GameDB-${currentAbbrev}/tree/main/games/` + encodeURIComponent(`${cell}`);
               a.target = '_blank';
               a.textContent = cell;
               td.appendChild(a);
