@@ -55,7 +55,7 @@ Here is the list of consoles currently in GameDB:
 * **Sony PlayStation 3 (PS3):** https://github.com/niemasd/GameDB-PS3
 * **Sony PlayStation Portable (PSP):** https://github.com/niemasd/GameDB-PSP
 * **Super Nintendo Entertainment System (SNES):** https://github.com/niemasd/GameDB-SNES
-* **Tiger Game.com:** https://github.com/niemasd/GameDB-Game.com
+* **Tiger Game.com:** https://github.com/niemasd/GameDB-Gamecom
 * **Watara Supervision:** https://github.com/niemasd/GameDB-Supervision
 * **Welback Mega Duck:** https://github.com/niemasd/GameDB-MegaDuck
 
