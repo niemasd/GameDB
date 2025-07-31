@@ -15,6 +15,9 @@ for game_folder in sorted(glob('games/*')):
         meta_fn = '%s/%s.txt' % (game_folder, meta)
         if isfile(meta_fn):
             contents = [v.strip() for v in open(meta_fn).read().strip().splitlines()]
+        else:
+            contents = list()
+        if len(contents) == 0:
             f.write(' / '.join(contents))
         else:
             f.write('N/A')
