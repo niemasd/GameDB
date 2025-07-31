@@ -14,6 +14,7 @@ REGIONS = {
     'Europe':       'PAL',
     'USA':          'NTSC-U',
     'USA, Brazil':  'NTSC-U',
+    'USA, Europe':  'NTSC-U',
 }
 
 # main program
