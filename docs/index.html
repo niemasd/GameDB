@@ -117,14 +117,18 @@
     const CORS_PROXY = 'https://corsproxy.io/?';
     const GAMEDB_URL = `https://github.com/${GITHUB_USERNAME}/GameDB`;
 
-    // Dynamically update the GitHub link
+    // dynamically update the GitHub link
     document.getElementById('githubLink').href = GAMEDB_URL;
     document.getElementById('githubLink').textContent = GAMEDB_URL;
 
     const db = new Map();
-    const consoleMap = new Map(); // Map CONSOLE_NAME -> { url, abbrev }
+    const consoleMap = new Map(); // map CONSOLE_NAME -> { url, abbrev }
     let sortState = { index: null, direction: null };
-    let currentAbbrev = null; // Tracks abbrev for hyperlinking
+    let currentAbbrev = null;
+
+    // parse query string
+    const urlParams = new URLSearchParams(window.location.search);
+    const preselectedAbbrev = urlParams.get('console');
 
     async function loadMarkdown() {
       const readmeUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/GameDB/main/README.md`;
@@ -142,6 +146,18 @@
           db.set(consoleName, null);
           consoleMap.set(consoleName, { url, abbrev });
           addOption(consoleName);
+        }
+      }
+
+      // if a console was specified in the URL, select it
+      if (preselectedAbbrev) {
+        const matchEntry = Array.from(consoleMap.entries()).find(
+          ([, meta]) => meta.abbrev.toLowerCase() === preselectedAbbrev.toLowerCase()
+        );
+        if (matchEntry) {
+          const consoleName = matchEntry[0];
+          document.getElementById('consoleSelector').value = consoleName;
+          document.getElementById('consoleSelector').dispatchEvent(new Event('change'));
         }
       }
     }
@@ -249,7 +265,7 @@
         }
       });
 
-      // Sort by first column automatically
+      // sort by first column automatically
       if (sortState.index === null) {
         table.querySelectorAll('th')[0].click();
       }
@@ -258,7 +274,7 @@
     document.getElementById('consoleSelector').addEventListener('change', async function () {
       // set things up
       const consoleName = this.value;
-      sortState = { index: null, direction: null }; // Reset sort state
+      sortState = { index: null, direction: null };
 
       // revert to initial state if empty selection
       if (!consoleName) {
@@ -269,8 +285,8 @@
       }
 
       // get console metadata
-      currentMeta = consoleMap.get(consoleName);
-      currentAbbrev = currentMeta.abbrev; // store for hyperlink rendering
+      const currentMeta = consoleMap.get(consoleName);
+      currentAbbrev = currentMeta.abbrev;
       document.getElementById('githubLink').href = currentMeta.url;
       document.getElementById('githubLink').textContent = currentMeta.url;
 
