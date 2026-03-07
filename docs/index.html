@@ -47,7 +47,7 @@
       flex-wrap: wrap;
     }
 
-    #modeToggle, #downloadBtn {
+    #modeToggle, #loadBtn {
       padding: 6px 10px;
       cursor: pointer;
       font-size: 14px;
@@ -57,22 +57,34 @@
       margin-top: 6px;
     }
 
+    #actionRow {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     #statusRow {
-      margin-top: 8px;
+      margin-top: 10px;
       font-size: 13px;
       color: var(--muted-color);
       min-height: 18px;
     }
-
     #statusRow.ok { color: var(--ok-color); }
     #statusRow.warn { color: var(--warn-color); }
 
     select, input {
-      margin: 10px 5px;
-      padding: 5px;
+      padding: 6px;
       background-color: var(--input-bg);
       color: var(--text-color);
       border: 1px solid var(--border-color);
+    }
+
+    #searchBox {
+      margin-top: 10px;
+      width: min(680px, 95vw);
     }
 
     table {
@@ -114,11 +126,10 @@
       color: #ff6600;
     }
 
-    /* Subtle divider line under controls */
     #controls hr {
       border: none;
       border-top: 1px solid var(--border-color);
-      margin: 12px auto 0 auto;
+      margin: 14px auto 0 auto;
       max-width: 900px;
     }
   </style>
@@ -134,44 +145,45 @@
       <a id="githubLink" target="_blank" rel="noopener">Loading...</a>
     </div>
 
-    <div id="actionRow" style="margin-top: 10px;">
-      <select id="consoleSelector">
-        <option value="">Select a Console</option>
-      </select>
-      <button id="downloadBtn" disabled title="Download the TSV from GitHub Releases, then choose it from your downloads">
-        ⬇️ Download & Load TSV
+    <div id="actionRow">
+      <button id="loadBtn" title="Load a previously-downloaded GameDB .data.tsv from your computer">
+        Load GameDB <code>.data.tsv</code>
       </button>
-      <input type="text" id="searchBox" placeholder="Search..." style="width: 300px;">
+
+      <select id="downloadSelector" title="Select a console to download its .data.tsv">
+        <option value="">Select a console to download its data TSV</option>
+      </select>
     </div>
 
     <div id="statusRow"></div>
+
+    <input type="text" id="searchBox" placeholder="Search loaded table..." disabled>
+
     <hr>
   </div>
 
   <div id="tableContainer"></div>
 
-  <!-- Hidden file picker (browser requires explicit user selection to read downloaded files) -->
+  <!-- Hidden file picker (browser requires explicit user selection to read local files) -->
   <input id="filePicker" type="file" accept=".tsv,.data.tsv,text/tab-separated-values" style="display:none;">
 
   <script>
     const GITHUB_USERNAME = 'niemasd';
     const GAMEDB_URL = `https://github.com/${GITHUB_USERNAME}/GameDB`;
 
-    // dynamically update the GitHub link
     const githubLink = document.getElementById('githubLink');
     githubLink.href = GAMEDB_URL;
     githubLink.textContent = GAMEDB_URL;
 
-    const db = new Map();
-    const consoleMap = new Map(); // map CONSOLE_NAME -> { url, abbrev }
+    const db = new Map();              // consoleName -> parsed rows
+    const consoleMap = new Map();      // consoleName -> { url, abbrev }
     let sortState = { index: null, direction: null };
-    let currentAbbrev = null;
-    let currentReleaseUrl = null;
-    let currentConsoleName = null;
+    let currentAbbrev = null;          // abbrev for currently loaded table
+    let currentConsoleName = null;     // name for currently loaded table
 
     // parse query string
     const urlParams = new URLSearchParams(window.location.search);
-    const preselectedAbbrev = urlParams.get('console');
+    const preselectedAbbrev = urlParams.get('console'); // for convenience: ?console=64DD etc.
 
     function setStatus(msg, kind = '') {
       const el = document.getElementById('statusRow');
@@ -182,6 +194,17 @@
 
     function expectedFilenameForAbbrev(abbrev) {
       return `${abbrev}.data.tsv`;
+    }
+
+    function clearTable() {
+      document.getElementById('tableContainer').innerHTML = '';
+      document.getElementById('searchBox').value = '';
+      document.getElementById('searchBox').disabled = true;
+      sortState = { index: null, direction: null };
+      currentAbbrev = null;
+      currentConsoleName = null;
+      githubLink.href = GAMEDB_URL;
+      githubLink.textContent = GAMEDB_URL;
     }
 
     async function loadMarkdown() {
@@ -197,31 +220,45 @@
           const consoleName = match[1];
           const abbrev = match[2];
           const url = `https://github.com/${GITHUB_USERNAME}/GameDB-${abbrev}`;
-          db.set(consoleName, null);
           consoleMap.set(consoleName, { url, abbrev });
-          addOption(consoleName);
+          addDownloadOption(consoleName);
         }
       }
 
-      // if a console was specified in the URL, select it
+      // If ?console=ABBREV was provided, auto-start a download for that abbrev.
+      // (This only downloads; loading still requires user to pick a file.)
       if (preselectedAbbrev) {
         const matchEntry = Array.from(consoleMap.entries()).find(
           ([, meta]) => meta.abbrev.toLowerCase() === preselectedAbbrev.toLowerCase()
         );
         if (matchEntry) {
           const consoleName = matchEntry[0];
-          document.getElementById('consoleSelector').value = consoleName;
-          document.getElementById('consoleSelector').dispatchEvent(new Event('change'));
+          triggerDownload(consoleName);
         }
       }
+
+      setStatus('Use “Load GameDB .data.tsv” to load a file, or pick a console to download its TSV.', '');
     }
 
-    function addOption(consoleName) {
-      const selector = document.getElementById('consoleSelector');
+    function addDownloadOption(consoleName) {
+      const selector = document.getElementById('downloadSelector');
       const option = document.createElement('option');
       option.value = consoleName;
       option.textContent = consoleName;
       selector.appendChild(option);
+    }
+
+    function triggerDownload(consoleName) {
+      const meta = consoleMap.get(consoleName);
+      if (!meta) return;
+
+      const abbrev = meta.abbrev;
+      const releaseUrl = `https://github.com/${GITHUB_USERNAME}/GameDB-${abbrev}/releases/latest/download/${abbrev}.data.tsv`;
+      const fname = expectedFilenameForAbbrev(abbrev);
+
+      // Update status + open the download
+      setStatus(`Downloading “${fname}”… When it finishes, click “Load GameDB .data.tsv” and select that file.`, 'warn');
+      window.open(releaseUrl, '_blank', 'noopener');
     }
 
     function renderTable(data) {
@@ -245,10 +282,7 @@
           const isSameColumn = sortState.index === idx;
           const ascending = !isSameColumn || sortState.direction === 'desc';
 
-          sortState = {
-            index: idx,
-            direction: ascending ? 'asc' : 'desc'
-          };
+          sortState = { index: idx, direction: ascending ? 'asc' : 'desc' };
 
           const sortedRows = data.slice(1).slice().sort((a, b) => {
             const aVal = a[idx] || '';
@@ -256,8 +290,7 @@
             return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
           });
 
-          const sortedData = [headers, ...sortedRows];
-          renderTable(sortedData);
+          renderTable([headers, ...sortedRows]);
         });
 
         headerRow.appendChild(th);
@@ -273,7 +306,7 @@
           row.forEach((cell, colIdx) => {
             const td = document.createElement('td');
 
-            if (colIdx === idIndex && cell) {
+            if (colIdx === idIndex && cell && currentAbbrev) {
               const a = document.createElement('a');
               a.href = `https://github.com/${GITHUB_USERNAME}/GameDB-${currentAbbrev}/tree/main/games/` + encodeURIComponent(`${cell}`);
               a.target = '_blank';
@@ -292,7 +325,10 @@
 
       renderBody(data);
 
-      document.getElementById('searchBox').oninput = function () {
+      // Search
+      const searchBox = document.getElementById('searchBox');
+      searchBox.disabled = false;
+      searchBox.oninput = function () {
         const query = this.value.toLowerCase();
         const filtered = [data[0], ...data.slice(1).filter(row =>
           row.some(cell => (cell || '').toLowerCase().includes(query))
@@ -303,6 +339,7 @@
       table.appendChild(tbody);
       container.appendChild(table);
 
+      // Sort indicator
       thead.querySelectorAll('th').forEach((th, i) => {
         th.classList.remove('sorted-asc', 'sorted-desc');
         if (sortState.index === i) {
@@ -310,76 +347,14 @@
         }
       });
 
-      // sort by first column automatically
+      // Sort by first column automatically on first render
       if (sortState.index === null) {
         table.querySelectorAll('th')[0].click();
       }
     }
 
-    function resetToInitialState() {
-      githubLink.href = GAMEDB_URL;
-      githubLink.textContent = GAMEDB_URL;
-      currentAbbrev = null;
-      currentReleaseUrl = null;
-      currentConsoleName = null;
-      document.getElementById('downloadBtn').disabled = true;
-      document.getElementById('searchBox').value = '';
-      renderTable([]);
-      setStatus('');
-    }
-
-    function setConsoleContext(consoleName) {
-      const currentMeta = consoleMap.get(consoleName);
-      currentAbbrev = currentMeta.abbrev;
-      currentConsoleName = consoleName;
-
-      githubLink.href = currentMeta.url;
-      githubLink.textContent = currentMeta.url;
-
-      currentReleaseUrl = `https://github.com/${GITHUB_USERNAME}/GameDB-${currentAbbrev}/releases/latest/download/${currentAbbrev}.data.tsv`;
-
-      document.getElementById('downloadBtn').disabled = false;
-
-      const fname = expectedFilenameForAbbrev(currentAbbrev);
-      setStatus(`Click “Download & Load TSV”, then choose “${fname}” from your downloads.`, 'warn');
-    }
-
-    document.getElementById('consoleSelector').addEventListener('change', function () {
-      // set things up
-      const consoleName = this.value;
-      sortState = { index: null, direction: null };
-
-      // revert to initial state if empty selection
-      if (!consoleName) {
-        resetToInitialState();
-        return;
-      }
-
-      setConsoleContext(consoleName);
-
-      // If we've already loaded this console's TSV in this session, render immediately
-      const cached = db.get(consoleName);
-      if (cached) {
-        setStatus(`Loaded from memory: ${cached.length - 1} rows.`, 'ok');
-        renderTable(cached);
-      } else {
-        renderTable([]);
-      }
-    });
-
-    // Download & Load button flow:
-    // 1) Open the GitHub release asset in a new tab to download (no CORS issue for navigation/download)
-    // 2) Prompt the user to select the downloaded file (browser security requirement)
-    document.getElementById('downloadBtn').addEventListener('click', () => {
-      if (!currentReleaseUrl || !currentConsoleName || !currentAbbrev) return;
-
-      const fname = expectedFilenameForAbbrev(currentAbbrev);
-      setStatus(`Downloading… when prompted, choose “${fname}” to load it.`, 'warn');
-
-      // Trigger download/navigation
-      window.open(currentReleaseUrl, '_blank', 'noopener');
-
-      // Immediately prompt file selection
+    // Load button -> file picker (loads file into memory and renders)
+    document.getElementById('loadBtn').addEventListener('click', () => {
       document.getElementById('filePicker').click();
     });
 
@@ -388,37 +363,62 @@
       if (!file) return;
 
       try {
-        // Basic sanity check: encourage the expected filename but don't require it
-        if (currentAbbrev) {
-          const expected = expectedFilenameForAbbrev(currentAbbrev);
-          if (file.name !== expected) {
-            setStatus(`Note: selected “${file.name}” (expected “${expected}”). Loading anyway…`, 'warn');
-          } else {
-            setStatus(`Loading “${file.name}”…`, 'warn');
-          }
-        } else {
-          setStatus(`Loading “${file.name}”…`, 'warn');
-        }
+        setStatus(`Loading “${file.name}”…`, 'warn');
 
         const text = await file.text();
         const rows = text.trim().split('\n').map(r => r.split('\t'));
 
-        // quick validation
         if (!rows.length || rows.length < 2) throw new Error('File appears empty or invalid.');
-        if (!Array.isArray(rows[0]) || rows[0].length < 1) throw new Error('Header row missing.');
 
-        // Cache + render
-        db.set(currentConsoleName, rows);
+        // Try to infer abbrev from filename like "64DD.data.tsv"
+        const m = file.name.match(/^([A-Za-z0-9_]+)\.data\.tsv$/);
+        const inferredAbbrev = m ? m[1] : null;
+
+        // Map inferred abbrev to console name (if possible)
+        let inferredConsoleName = null;
+        if (inferredAbbrev) {
+          const entry = Array.from(consoleMap.entries()).find(([, meta]) => meta.abbrev === inferredAbbrev);
+          if (entry) inferredConsoleName = entry[0];
+        }
+
+        currentAbbrev = inferredAbbrev || null;
+        currentConsoleName = inferredConsoleName || null;
+
+        // Update GitHub link: to console repo if we inferred it, else main repo
+        if (currentConsoleName && consoleMap.has(currentConsoleName)) {
+          const meta = consoleMap.get(currentConsoleName);
+          githubLink.href = meta.url;
+          githubLink.textContent = meta.url;
+          db.set(currentConsoleName, rows);
+        } else {
+          githubLink.href = GAMEDB_URL;
+          githubLink.textContent = GAMEDB_URL;
+        }
+
         document.getElementById('searchBox').value = '';
-        setStatus(`Loaded: ${rows.length - 1} rows.`, 'ok');
+        sortState = { index: null, direction: null };
+
+        const label = inferredAbbrev ? ` (${inferredAbbrev})` : '';
+        setStatus(`Loaded: ${rows.length - 1} rows${label}.`, 'ok');
         renderTable(rows);
       } catch (err) {
-        alert('Failed to load TSV file. Please try downloading again and selecting the .data.tsv file.');
-        setStatus('Failed to load TSV file. Try again.', 'warn');
+        alert('Failed to load TSV file. Please select a valid GameDB .data.tsv file.');
+        setStatus('Failed to load TSV file.', 'warn');
       } finally {
         // reset picker so choosing the same file again triggers change
         e.target.value = '';
       }
+    });
+
+    // Download dropdown: selecting a console immediately starts a download (no proxy).
+    document.getElementById('downloadSelector').addEventListener('change', function () {
+      const consoleName = this.value;
+      if (!consoleName) return;
+
+      triggerDownload(consoleName);
+
+      // Reset to default prompt so it feels like an action menu, not a "selected state"
+      this.value = '';
     });
 
     document.getElementById('modeToggle').addEventListener('click', function () {
@@ -427,6 +427,8 @@
       this.textContent = body.classList.contains('dark') ? '☀️ Light Mode' : '🌙 Dark Mode';
     });
 
+    // Initial state
+    clearTable();
     loadMarkdown();
   </script>
 </body>
