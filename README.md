@@ -61,6 +61,7 @@ Here is the list of consoles currently in GameDB:
 
 # Projects Using GameDB
 
+* [FlipperMCE](https://github.com/FlipperMCE/firmware)
 * [GameID](https://github.com/niemasd/GameID)
 * [MemCard PRO Renamer](https://github.com/niemasd/MemCard-PRO-Renamer)
 * [sd2psXtd](https://github.com/sd2psXtd)
