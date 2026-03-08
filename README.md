@@ -65,5 +65,6 @@ Here is the list of consoles currently in GameDB:
 * [GameID](https://github.com/niemasd/GameID)
 * [MemCard PRO Renamer](https://github.com/niemasd/MemCard-PRO-Renamer)
 * [sd2psXtd](https://github.com/sd2psXtd)
+* [Zaparoo](https://github.com/ZaparooProject/go-gameid)
 
 Are you interested in using GameDB in your projects? Please feel free to do so! Each GameDB repository has structured downloads (e.g. JSON and TSV) with URLs that always point to the most recent contents of the database, and they were designed this way to make it easy to load into other projects. All we ask is that you provide attribution to GameDB as well as to any other sources from which GameDB pulled information (see the "Sources" section in each individual GameDB repository).
