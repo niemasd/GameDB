@@ -25,6 +25,7 @@ Here is the list of consoles currently in GameDB:
 * **Microsoft XBOX 360:** https://github.com/niemasd/GameDB-XBOX360
 * **NEC SuperGrafx:** https://github.com/niemasd/GameDB-SuperGrafx
 * **NEC TurboGrafx-16:** https://github.com/niemasd/GameDB-TurboGrafx16
+* **NEC TurboGrafx-CD:** https://github.com/niemasd/GameDB-TurboGrafxCD
 * **Nintendo 64 (N64):** https://github.com/niemasd/GameDB-N64
 * **Nintendo 64DD:** https://github.com/niemasd/GameDB-64DD
 * **Nintendo Entertainment System (NES):** https://github.com/niemasd/GameDB-NES
