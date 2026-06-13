@@ -126,6 +126,55 @@
       color: #ff6600;
     }
 
+    #columnToggleRow {
+      display: none;
+      margin: 12px auto 0 auto;
+      max-width: min(1000px, 95vw);
+      text-align: center;
+    }
+
+    .columnToggleTitle {
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: var(--muted-color);
+    }
+
+    .columnToggleList {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px 10px;
+      flex-wrap: wrap;
+    }
+
+    .columnToggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 7px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: var(--input-bg);
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .columnToggle.required {
+      color: var(--muted-color);
+      cursor: not-allowed;
+    }
+
+    .columnToggle input[type="checkbox"] {
+      margin: 0;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .columnToggle.required input[type="checkbox"] {
+      cursor: not-allowed;
+    }
+
     #controls hr {
       border: none;
       border-top: 1px solid var(--border-color);
@@ -153,6 +202,7 @@
     </div>
     <div id="statusRow"></div>
     <input type="text" id="searchBox" placeholder="Search loaded table..." disabled>
+    <div id="columnToggleRow"></div>
     <hr>
   </div>
   <div id="tableContainer"></div>
@@ -174,6 +224,8 @@
     let sortState = { index: null, direction: null };
     let currentAbbrev = null;          // abbrev for currently loaded table
     let currentConsoleName = null;     // name for currently loaded table
+    let currentTableData = null;       // currently rendered table rows, including header
+    let visibleColumns = new Set();    // column indexes currently shown
 
     // set status
     function setStatus(msg, kind = '') {
@@ -193,6 +245,10 @@
       document.getElementById('tableContainer').innerHTML = '';
       document.getElementById('searchBox').value = '';
       document.getElementById('searchBox').disabled = true;
+      document.getElementById('columnToggleRow').innerHTML = '';
+      document.getElementById('columnToggleRow').style.display = 'none';
+      currentTableData = null;
+      visibleColumns = new Set();
       sortState = { index: null, direction: null };
       currentAbbrev = null;
       currentConsoleName = null;
@@ -248,23 +304,129 @@
       window.open(releaseUrl, '_blank', 'noopener');
     }
 
+    // find the required column; GameDB TSVs use ID as the left-most column
+    function getRequiredColumnIndex(headers) {
+      const idIndex = headers.indexOf('ID');
+      return idIndex >= 0 ? idIndex : 0;
+    }
+
+    // initialize column visibility from the loaded TSV header row
+    function initializeVisibleColumns(headers) {
+      visibleColumns = new Set();
+      headers.forEach((_, idx) => visibleColumns.add(idx));
+      visibleColumns.add(getRequiredColumnIndex(headers));
+    }
+
+    // get currently visible columns while guaranteeing the required ID column remains visible
+    function getVisibleColumnIndexes(headers) {
+      if (!headers || !headers.length) return [];
+      if (visibleColumns.size === 0) initializeVisibleColumns(headers);
+      visibleColumns.add(getRequiredColumnIndex(headers));
+      return headers
+        .map((_, idx) => idx)
+        .filter(idx => visibleColumns.has(idx));
+    }
+
+    // create column visibility toggles from the TSV header row
+    function renderColumnToggles(headers) {
+      const toggleRow = document.getElementById('columnToggleRow');
+      toggleRow.innerHTML = '';
+
+      if (!headers || !headers.length) {
+        toggleRow.style.display = 'none';
+        return;
+      }
+
+      const requiredIndex = getRequiredColumnIndex(headers);
+      visibleColumns.add(requiredIndex);
+      toggleRow.style.display = 'block';
+
+      const title = document.createElement('div');
+      title.className = 'columnToggleTitle';
+      title.textContent = 'Columns:';
+      toggleRow.appendChild(title);
+
+      const list = document.createElement('div');
+      list.className = 'columnToggleList';
+
+      headers.forEach((header, idx) => {
+        const label = document.createElement('label');
+        label.className = 'columnToggle';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.dataset.columnIndex = String(idx);
+        checkbox.checked = visibleColumns.has(idx) || idx === requiredIndex;
+
+        if (idx === requiredIndex) {
+          checkbox.checked = true;
+          checkbox.disabled = true;
+          label.classList.add('required');
+          label.title = `${header} is always shown.`;
+        }
+
+        checkbox.addEventListener('change', function () {
+          const colIdx = Number(this.dataset.columnIndex);
+
+          if (this.checked) {
+            visibleColumns.add(colIdx);
+          } else if (colIdx !== getRequiredColumnIndex(headers)) {
+            visibleColumns.delete(colIdx);
+          }
+
+          visibleColumns.add(getRequiredColumnIndex(headers));
+
+          // If the user hides the sorted column, fall back to the default ID sort.
+          if (!this.checked && sortState.index === colIdx) {
+            sortState = { index: null, direction: null };
+          }
+
+          if (currentTableData) renderTable(currentTableData);
+        });
+
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(` ${header}`));
+        list.appendChild(label);
+      });
+
+      toggleRow.appendChild(list);
+    }
+
+    // filter rows according to the search box; hidden columns are still searchable
+    function getFilteredData(data, query) {
+      if (!query) return data;
+      return [data[0], ...data.slice(1).filter(row =>
+        row.some(cell => (cell || '').toLowerCase().includes(query))
+      )];
+    }
+
     // render data.tsv table
     function renderTable(data) {
       // set up table
       const container = document.getElementById('tableContainer');
       container.innerHTML = '';
-      if (!data || !Array.isArray(data) || data.length === 0) return;
+      if (!data || !Array.isArray(data) || data.length === 0) {
+        currentTableData = null;
+        renderColumnToggles([]);
+        return;
+      }
+      currentTableData = data;
       const table = document.createElement('table');
       const thead = document.createElement('thead');
       const tbody = document.createElement('tbody');
 
       // set up header row
       const headers = data[0];
+      if (visibleColumns.size === 0) initializeVisibleColumns(headers);
       const idIndex = headers.indexOf('ID');
+      const visibleColumnIndexes = getVisibleColumnIndexes(headers);
+      renderColumnToggles(headers);
+
       const headerRow = document.createElement('tr');
-      headers.forEach((header, idx) => {
+      visibleColumnIndexes.forEach((idx) => {
         const th = document.createElement('th');
-        th.textContent = header;
+        th.textContent = headers[idx];
+        th.dataset.columnIndex = String(idx);
         th.addEventListener('click', () => {
           const isSameColumn = sortState.index === idx;
           const ascending = !isSameColumn || sortState.direction === 'desc';
@@ -286,8 +448,9 @@
         tbody.innerHTML = '';
         filteredData.slice(1).forEach(row => {
           const tr = document.createElement('tr');
-          row.forEach((cell, colIdx) => {
+          visibleColumnIndexes.forEach((colIdx) => {
             const td = document.createElement('td');
+            const cell = row[colIdx] || '';
             if (colIdx === idIndex && cell && currentAbbrev) {
               const a = document.createElement('a');
               a.href = `https://github.com/${GITHUB_USERNAME}/GameDB-${currentAbbrev}/tree/main/games/` + encodeURIComponent(`${cell}`);
@@ -303,32 +466,31 @@
           tbody.appendChild(tr);
         });
       };
-      renderBody(data);
 
       // set up search box
       const searchBox = document.getElementById('searchBox');
       searchBox.disabled = false;
       searchBox.oninput = function () {
         const query = this.value.toLowerCase();
-        const filtered = [data[0], ...data.slice(1).filter(row =>
-          row.some(cell => (cell || '').toLowerCase().includes(query))
-        )];
-        renderBody(filtered);
+        renderBody(getFilteredData(data, query));
       };
+      renderBody(getFilteredData(data, searchBox.value.toLowerCase()));
       table.appendChild(tbody);
       container.appendChild(table);
 
       // set up sorting indicator
-      thead.querySelectorAll('th').forEach((th, i) => {
+      thead.querySelectorAll('th').forEach((th) => {
+        const colIdx = Number(th.dataset.columnIndex);
         th.classList.remove('sorted-asc', 'sorted-desc');
-        if (sortState.index === i) {
+        if (sortState.index === colIdx) {
           th.classList.add(sortState.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
         }
       });
 
-      // Sort by first column automatically on first render
+      // Sort by the required ID column automatically on first render
       if (sortState.index === null) {
-        table.querySelectorAll('th')[0].click();
+        const defaultSortHeader = thead.querySelector(`th[data-column-index="${getRequiredColumnIndex(headers)}"]`);
+        if (defaultSortHeader) defaultSortHeader.click();
       }
     }
 
@@ -376,6 +538,8 @@
         // finish up
         document.getElementById('searchBox').value = '';
         sortState = { index: null, direction: null };
+        currentTableData = null;
+        initializeVisibleColumns(rows[0]);
         const label = inferredAbbrev ? ` (${inferredAbbrev})` : '';
         setStatus(`Loaded: ${rows.length - 1} rows${label}.`, 'ok');
         renderTable(rows);
