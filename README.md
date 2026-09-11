@@ -62,10 +62,20 @@ Here is the list of consoles currently in GameDB:
 
 # Projects Using GameDB
 
+* [Console Save Sync](https://github.com/iPavelka/console-save-sync)
 * [FlipperMCE](https://github.com/FlipperMCE/firmware)
 * [GameID](https://github.com/niemasd/GameID)
+* [Grout](https://github.com/rommapp/grout)
+* [ISObe-PS2](https://github.com/abennett05/isobe)
+* [Katana](https://github.com/gingerbeardman/Katana)
 * [MemCard PRO Renamer](https://github.com/niemasd/MemCard-PRO-Renamer)
 * [NeoStation iOS](https://github.com/TarbleFR/neostation-ios)
+* [OSDMenu](https://github.com/pcm720/OSDMenu)
+* [PlayStation Save Manager](https://github.com/evnzt/PlayStation-Save-Manager)
+* [PS2 Batch Renamer](https://github.com/L10N37/PS2-ISO-Batch-Renamer-)
+* [PS2 Manager](https://github.com/pearlxcore/PS2-Manager)
+* [Reflex Adapt Classic2USB](https://github.com/misteraddons/Reflex-Adapt)
+* [ROMulus](https://github.com/Sphexi/ROMulus)
 * [sd2psXtd](https://github.com/sd2psXtd)
 * [Zaparoo](https://github.com/ZaparooProject/go-gameid)
 
