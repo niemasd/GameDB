@@ -65,6 +65,7 @@ Here is the list of consoles currently in GameDB:
 * [FlipperMCE](https://github.com/FlipperMCE/firmware)
 * [GameID](https://github.com/niemasd/GameID)
 * [MemCard PRO Renamer](https://github.com/niemasd/MemCard-PRO-Renamer)
+* [NeoStation iOS](https://github.com/TarbleFR/neostation-ios)
 * [sd2psXtd](https://github.com/sd2psXtd)
 * [Zaparoo](https://github.com/ZaparooProject/go-gameid)
 
